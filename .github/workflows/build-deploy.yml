@@ -19,7 +19,7 @@ jobs:
             - name: Login to ECR
               uses: docker/login-action@v3
               with:
-                registry: ${{ env.REGISTRY }}
+                registry: ${{ env.ECR_REGISTRY }}
                 username: ${{ secrets.AWS_ACCESS_KEY_ID }}
                 password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -29,8 +29,8 @@ jobs:
                 
             - name: Build and Push Docker Image
               run: |
-                  IMAGE_TAG_LATEST=${{ env.REGISTRY }}:latest
-                  IMAGE_TAG_SHA=${{ vars.REGISTRY }}:${{ env.SHORT_SHA }}
+                  IMAGE_TAG_LATEST=${{ env.ECR_REGISTRY }}:latest
+                  IMAGE_TAG_SHA=${{ vars.ECR_REGISTRY }}:${{ env.SHORT_SHA }}
 
                   echo "Building image with tags:"
                   echo "  $IMAGE_TAG_LATEST"
