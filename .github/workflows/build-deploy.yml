@@ -5,6 +5,7 @@ on:
 
 env:
     REGION: af-south-1
+    ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.REGION }}.amazonaws.com/market-financials
 
 jobs:
     build:
@@ -18,7 +19,7 @@ jobs:
             - name: Login to ECR
               uses: docker/login-action@v3
               with:
-                registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.REGION }}.amazonaws.com
+                registry: ${{ vars.REGISTRY }}
                 username: ${{ secrets.AWS_ACCESS_KEY_ID }}
                 password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -28,20 +29,18 @@ jobs:
                 
             - name: Build and Push Docker Image
               run: |
-                  REPO_OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-
-                  IMAGE_TAG_DOTNET=ghcr.io/$REPO_OWNER_LOWER/${{ env.IMAGE_NAME }}:${{ env.DOTNET_VERSION }}
-                  IMAGE_TAG_SHA=ghcr.io/$REPO_OWNER_LOWER/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
+                  IMAGE_TAG_LATEST=${{ vars.REGISTRY }}:latest
+                  IMAGE_TAG_SHA=${{ vars.REGISTRY }}:${{ env.SHORT_SHA }}
 
                   echo "Building image with tags:"
-                  echo "  $IMAGE_TAG_DOTNET"
+                  echo "  $IMAGE_TAG_LATEST"
                   echo "  $IMAGE_TAG_SHA"
 
                   docker build \
-                    -t $IMAGE_TAG_DOTNET \
+                    -t $IMAGE_TAG_LATEST \
                     -t $IMAGE_TAG_SHA \
                     .
 
                   docker push $IMAGE_TAG_SHA
-                  docker push $IMAGE_TAG_DOTNET
+                  docker push $IMAGE_TAG_LATEST
                    
