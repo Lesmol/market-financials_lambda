@@ -5,7 +5,7 @@ on:
 
 env:
     REGION: af-south-1
-    ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/market-financials
+    ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.af-south-1.amazonaws.com/market-financials
 
 jobs:
     build:
