@@ -46,3 +46,7 @@ To build the image locally for testing, run the following command:
 
 ```bash
 docker build -t market-financials-lambda .
+```
+
+## 🔨Tools used:
+[![My Skills](https://skillicons.dev/icons?i=py,aws,terraform,git,githubactions&perline=6)](https://skillicons.dev)
