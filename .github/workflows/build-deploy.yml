@@ -30,7 +30,7 @@ jobs:
             - name: Build and Push Docker Image
               run: |
                   IMAGE_TAG_LATEST=${{ env.ECR_REGISTRY }}:latest
-                  IMAGE_TAG_SHA=${{ vars.ECR_REGISTRY }}:${{ env.SHORT_SHA }}
+                  IMAGE_TAG_SHA=${{ env.ECR_REGISTRY }}:${{ env.SHORT_SHA }}
 
                   echo "Building image with tags:"
                   echo "  $IMAGE_TAG_LATEST"
