@@ -65,5 +65,5 @@ jobs:
           run: |
             aws lambda update-function-code \
             --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
-            --image-uri ${{ needs.build.outputs.short_sha }}
+            --image-uri ${{ env.ECR_REGISTRY }}:${{ needs.build.outputs.short_sha }}
                    
