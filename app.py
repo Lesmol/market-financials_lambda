@@ -27,11 +27,18 @@ def bad_request(response_data):
 
 
 def handler(event, context):
-    ticker = event.get("ticker")
-    statement_type = event.get("statement")
+    print(f"Full event: {json.dumps(event)}")
+    
+    if "body" in event and event["body"]:
+        body_data = json.loads(event["body"])
+
+        statement_type = body_data.get("statement")
+        ticker = body_data.get("ticker")
+
+        print(f"Processing {statement_type} for {ticker}")
 
     if not ticker:
-        return bad_request({"message": "No ticket provided"})
+        return bad_request({"message": "No ticker provided"})
     elif not statement_type:
         return bad_request({"message": "No statement type provided"})
 
