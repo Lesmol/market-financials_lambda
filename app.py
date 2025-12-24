@@ -6,19 +6,9 @@ def stringify_keys(d):
     return {str(k): v for k, v in d.items()}
 
 
-def ok(response_data):
+def map_response(status_code, response_data):
     return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps(response_data)
-    }
-
-
-def bad_request(response_data):
-    return {
-        "statusCode": 400,
+        "statusCode": status_code,
         "headers": {
             "Content-Type": "application/json"
         },
@@ -28,7 +18,7 @@ def bad_request(response_data):
 
 def handler(event, context):
     print(f"Full event: {json.dumps(event)}")
-    
+
     if "body" in event and event["body"]:
         body_data = json.loads(event["body"])
 
@@ -38,9 +28,9 @@ def handler(event, context):
         print(f"Processing {statement_type} for {ticker}")
 
     if not ticker:
-        return bad_request({"message": "No ticker provided"})
+        return map_response(400, {"message": "No ticker provided"})
     elif not statement_type:
-        return bad_request({"message": "No statement type provided"})
+        return map_response(400, {"message": "No statement type provided"})
 
     stock = yf.Ticker(ticker)
 
@@ -54,7 +44,7 @@ def handler(event, context):
             "lastQuarter": {"date": str(last_quarter_date), "data": last_quarter_data}
         }
 
-        return ok(response)
+        return map_response(200, response)
     elif statement_type == "cash_flow":
         last_quarter_date, last_quarter_data = next(iter(stock.get_cash_flow(
             as_dict=True, pretty=True, freq="quarterly").items()), (None, None))
@@ -66,7 +56,7 @@ def handler(event, context):
             "lastQuarter": {"date": str(last_quarter_date), "data": last_quarter_data}
         }
 
-        return ok(response)
+        return map_response(200, response)
     elif statement_type == "income_statement":
         last_quarter_date, last_quarter_data = next(iter(stock.get_income_stmt(
             as_dict=True, freq="quarterly", pretty=True).items()), (None, None))
@@ -78,6 +68,6 @@ def handler(event, context):
             "lastQuarter": {"date": str(last_quarter_date), "data": last_quarter_data}
         }
 
-        return ok(response)
+        return map_response(200, response)
 
-    return bad_request({"message": "Incorrect statement type was passed."})
+    return map_response(400, {"message": "Incorrect statement type was passed."})
