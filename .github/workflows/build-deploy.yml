@@ -32,10 +32,10 @@ jobs:
               with:
                 length: 7
                 
-            - name: Build Docker Images
+            - name: Build Containers
               run: docker build -t ${{ env.ECR_REGISTRY }}:latest -t ${{ env.ECR_REGISTRY }}:${{ steps.short-sha.outputs.sha }} .
 
-            - name: Push Docker Images
+            - name: Push Containers to ECR
               run : |
                     docker push ${{ env.ECR_REGISTRY }}:latest
                     docker push ${{ env.ECR_REGISTRY }}:${{ steps.short-sha.outputs.sha }}
