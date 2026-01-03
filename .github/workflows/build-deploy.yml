@@ -5,7 +5,7 @@ on:
 
 env:
     REGION: af-south-1
-    ECR_REGISTRY: 602563225957.dkr.ecr.af-south-1.amazonaws.com/market-financials
+    ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.af-south-1.amazonaws.com/market-financials
     LAMBDA_FUNCTION_NAME: market_financials_function
 
 jobs:
@@ -32,19 +32,13 @@ jobs:
               with:
                 length: 7
                 
-            - name: Build and Push Docker Image
-              run: |
-                  IMAGE_TAG_LATEST=${{ env.ECR_REGISTRY }}:latest
-                  IMAGE_TAG_SHA=${{ env.ECR_REGISTRY }}:${{ steps.short-sha.outputs.sha }}
+            - name: Build Docker Images
+              run: docker build -t ${{ env.ECR_REGISTRY }}:latest -t ${{ env.ECR_REGISTRY }}:${{ steps.short-sha.outputs.sha }} .
 
-                  echo "Building image with tags:"
-                  echo "  $IMAGE_TAG_LATEST"
-                  echo "  $IMAGE_TAG_SHA"
-
-                  docker build -t $IMAGE_TAG_LATEST -t $IMAGE_TAG_SHA .
-
-                  docker push $IMAGE_TAG_SHA
-                  docker push $IMAGE_TAG_LATEST
+            - name: Push Docker Images
+              run : |
+                    docker push ${{ env.ECR_REGISTRY }}:latest
+                    docker push ${{ env.ECR_REGISTRY }}:${{ steps.short-sha.outputs.sha }}
     deploy:
       name: Update Lambda Image
       runs-on: ubuntu-latest
